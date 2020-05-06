@@ -1,5 +1,5 @@
 # Storj Earnings Notify
-Notify Storj V3 earnings estimation via Pushbullet
+Send Pushbullet notifications to let you know your Storj V3 earnings estimation on demand or on a regular basis.
 
 ## Prerequisites
 Python is required to run this script.
