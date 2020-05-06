@@ -13,7 +13,7 @@
 #Parameters to be set by the user
 # Directories must be specified without "/" at the end.
 
-STORAGE_DIR="" # Absolute storage node directory path 
+STORAGE_DIR="" # Absolute storage node directory path (where required files are stored, such as bandwidth.db)
 CONTAINER_NAME="" # Docker container name of the storage node
 STORAGENODE_NAME="" # Friendly name of the stroage node. Chose the one you want to be used in your notifications. 
 PUSHBULLET_KEY="" # Pushbullet API key
