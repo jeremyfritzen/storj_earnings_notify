@@ -9,7 +9,7 @@ This script was developed and tested on Debian 9.
 It should work on other Debian-based Linux distribution.
 
 ### Information
-The Docker container will be stopped while the script will copy the required files for earning calculation.
+The Docker container will be stopped while the script will copy the required files for earning calculation. The downtime should be very quick (few seconds most of the time)
 Even if this doesn't seem to be necessary, it's better to do it to make sure it won't affect the node consistency.
 
 ## Configuration
