@@ -13,7 +13,7 @@ The Docker container will be stopped while the script will copy the required fil
 Even if this doesn't seem to be necessary, it's better to do it to make sure it won't affect the node consistency.
 
 ## Configuration
-1. Copy config_template file and rename it "config".
+1. Copy config_template file and rename it "<node_name>.conf" (only the extension ".conf" is important).
 2. Fill-in the required USER PARAMETERS in the new config file.
 
 3. Configure daily notifications
