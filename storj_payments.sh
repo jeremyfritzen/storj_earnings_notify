@@ -6,21 +6,6 @@
 
 # Use this script with a user authorized to run Docker commands.
 
-#############################################
-############## USER PARAMETERS ##############
-#############################################
-
-#Parameters to be set by the user
-# Directories must be specified without "/" at the end.
-
-STORAGE_DIR="" # Absolute storage node directory path (where required files are stored, such as bandwidth.db)
-CONTAINER_NAME="" # Docker container name of the storage node
-STORAGENODE_NAME="" # Friendly name of the stroage node. Chose the one you want to be used in your notifications. 
-PUSHBULLET_KEY="" # Pushbullet API key
-PUSHBULLET_DEVICE="" # OPTIONAL - Pushbullet ID device on which the notification will be sent. If not specified, the notification will be sent to all devices.
-
-
-
 ###############################################
 ############## SCRIPT PARAMETERS ##############
 ###############################################
@@ -31,11 +16,17 @@ SCRIPT_DIR=$(cd $( dirname ${BASH_SOURCE[0]}) && pwd )
 TEMP_DIR=$SCRIPT_DIR/infodbcopy
 DATE=$(date +%Y-%m-%d-%H-%M)
 
+# Load USER PARAMETERS
+
+. $SCRIPT_DIR/config
 
 
 ##############################################
 ############## SCRIPT EXECUTION ##############
 ##############################################
+
+[[ -d $SCRIPT_DIR/infodbcopy ]] || mkdir $SCRIPT_DIR/infodbcopy
+[[ -d $SCRIPT_DIR/history ]] || mkdir $SCRIPT_DIR/history
 
 docker stop -t 300 $CONTAINER_NAME
 

@@ -13,9 +13,10 @@ The Docker container will be stopped while the script will copy the required fil
 Even if this doesn't seem to be necessary, it's better to do it to make sure it won't affect the node consistency.
 
 ## Configuration
-1. Fill-in the required USER PARAMETERS in the storj_payments.sh script.
+1. Copy config_template file and rename it "config".
+2. Fill-in the required USER PARAMETERS in the new config file.
 
-2. Configure daily notifications
+3. Configure daily notifications
 	* ``` sudo crontab -e ```
 	* Then add the following line, replacing "path_to_the_script" by the appropriate absolute path: ``` 0 7 * * * /path_to_the_script/storj_payments.sh ```
 
