@@ -18,8 +18,9 @@ DATE=$(date +%Y-%m-%d-%H-%M)
 
 # Load USER PARAMETERS
 
-. $SCRIPT_DIR/config
-
+for conf_file in `ls $SCRIPT_DIR/*.conf`
+do
+    . $conf_file
 
 ##############################################
 ############## SCRIPT EXECUTION ##############
