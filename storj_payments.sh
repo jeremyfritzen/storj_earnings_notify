@@ -49,7 +49,7 @@ docker start $CONTAINER_NAME
 
 python $SCRIPT_DIR/storj_earnings/earnings.py $TEMP_DIR $1 | tee $SCRIPT_DIR/history/payment-$DATE
 
-earnings=$(awk '/^Total/ {print $6,$7}' $SCRIPT_DIR/history/payment-$DATE)
+earnings=$(awk '/^TOTAL/ {print $8,$9}' $SCRIPT_DIR/history/payment-$DATE)
 
 if [ "$PUSHBULLET_DEVICE" -eq "" ]; then
 	curl -s -u $PUSHBULLET_KEY: -X POST https://api.pushbullet.com/v2/pushes \
