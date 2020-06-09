@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-version = "9.2.0"
+version = "9.2.2"
 
 from calendar import monthrange
 from datetime import datetime
@@ -52,7 +52,7 @@ if not os.path.isfile(dbPathR):
              + sys.argv[0] + ' "' + os.getcwd() + '"')
 
 dbPathH = os.path.join(dbPath,"heldamount.db")
-if not os.path.isfile(dbPathR):
+if not os.path.isfile(dbPathH):
 	sys.exit('ERROR: heldamount.db not found at: "' + dbPath + '" or "' + configPath 
              + '". \nEnter the correct path for your Storj config directory as a parameter. \nExample: python ' 
              + sys.argv[0] + ' "' + os.getcwd() + '"')
@@ -62,7 +62,7 @@ if len(sys.argv) == 3:
         mdate = datetime.strptime(sys.argv[2], '%Y-%m')
     except ValueError:
         sys.exit('ERROR: Invalid month argument. \nUse YYYY-MM as format. \nExample: python ' 
-                 + sys.argv[0] + ' "' + os.getcwd() + '" "' + datetime.now().strftime('%Y-%m') + '"')
+                 + sys.argv[0] + ' "' + os.getcwd() + '" "' + datetime.utcnow().strftime('%Y-%m') + '"')
 else:
     mdate = datetime.utcnow()
 
@@ -272,8 +272,9 @@ paid_sum_surge = list()
 held_sum = list()
 held_sum_surge = list()
 
-hours_month = monthrange(mdate.year, mdate.month)[1] * 24
-month_passed = (datetime.utcnow() - date_from).total_seconds() / (hours_month*3600)
+hours_month = 730 #Storj seems to use 730 instead of calculation
+hours_this_month = monthrange(mdate.year, mdate.month)[1] * 24
+month_passed = (datetime.utcnow() - date_from).total_seconds() / (hours_this_month*3600)
 
 for data in con.execute(query):
     if len(data) < 12:
@@ -338,9 +339,9 @@ for data in con.execute(query):
 con.close()
 
 if len(sys.argv) == 3:
-    print("\033[4m\n{} (Version: {})\033[0m".format(mdate.strftime('%B %Y'), version))    
+    print("\033[4m{} (Version: {})\033[0m".format(mdate.strftime('%B %Y'), version))    
 else:
-    print("\033[4m\n{} (Version: {})\t\t\t\t\t\t[snapshot: {}]\033[0m".format(mdate.strftime('%B %Y'), version, mdate.strftime('%Y-%m-%d %H:%M:%SZ')))
+    print("\033[4m{} (Version: {})\t\t\t\t\t\t[snapshot: {}]\033[0m".format(mdate.strftime('%B %Y'), version, mdate.strftime('%Y-%m-%d %H:%M:%SZ')))
 
 
 print("\t\t\tTYPE\t\tPRICE\t\t\tDISK\t   BANDWIDTH\t\tPAYOUT")
@@ -363,7 +364,7 @@ else:
 if len(sys.argv) < 3:
     print("Estimated total by end of month\t\t\t\t{}m\t{}\t{:10.2f} USD".format(formatSize((sum(bh) / hours_month)/month_passed), formatSize(sum(bw_sum)/month_passed), sum(usd_sum)/month_passed))
 elif len(surge_percent) > 0 and sum(surge_percent)/len(surge_percent) > 100:
-    print("Total Surge ({:n}%)\t\t\t\t\t\t\t\t\t{:10.2f} USD".format((sum(usd_sum_surge)*100) / sum(usd_sum), sum(usd_sum_surge)))
+    print("Total Surge ({:.0f}%)\t\t\t\t\t\t\t\t\t{:10.2f} USD".format((sum(usd_sum_surge)*100) / sum(usd_sum), sum(usd_sum_surge)))
 
 print("\033[4m\nPayout and held amount by satellite:\033[0m")
 
@@ -371,13 +372,13 @@ print("SATELLITE\tMONTH\tJOINED\t     HELD TOTAL\t      EARNED\tHELD%\t\t HELD\t
 
 nl = ''
 for i in range(len(usd_sum)):
-    print("{}{}\t{:5n}\t{} {:8.2f} USD\t{:8.4f} USD\t{:4n}%\t {:8.4f} USD\t{:8.4f} USD".format(nl,sat_name[i],month_nr[i],sat_start_dt[i],held_so_far[i]-disp_so_far[i],usd_sum[i],held_perc[i]*100,held_sum[i],paid_sum[i]))
+    print("{}{}\t{:5.0f}\t{} {:8.2f} USD\t{:8.4f} USD\t{:4.0f}%\t {:8.4f} USD\t{:8.4f} USD".format(nl,sat_name[i],month_nr[i],sat_start_dt[i],held_so_far[i]-disp_so_far[i],usd_sum[i],held_perc[i]*100,held_sum[i],paid_sum[i]))
     nl = '\n'
     if len(sys.argv) < 3:
         print("\tStatus: {} (Audit score: {})".format(rep_status[i],audit_score[i]))
         nl = ''
     if surge_percent[i] > 100:
-        print("\tSURGE ({:n}%)\t\t\t\t{:8.4f} USD\t{:4n}%\t {:8.4f} USD\t{:8.4f} USD".format(surge_percent[i],usd_sum_surge[i],held_perc[i]*100,held_sum_surge[i],paid_sum_surge[i]))
+        print("\tSURGE ({:.0f}%)\t\t\t\t{:8.4f} USD\t{:4.0f}%\t {:8.4f} USD\t{:8.4f} USD".format(surge_percent[i],usd_sum_surge[i],held_perc[i]*100,held_sum_surge[i],paid_sum_surge[i]))
         nl = ''
     
     if disposed[i] > 0:
@@ -392,7 +393,7 @@ for i in range(len(usd_sum)):
 print("_____________________________________________________________________________________________________+")
 print("TOTAL\t\t\t\t   {:8.2f} USD\t{:8.4f} USD\t\t {:8.4f} USD\t{:8.4f} USD".format(sum(held_so_far)-sum(disp_so_far),sum(usd_sum),sum(held_sum),sum(paid_sum)))
 if len(surge_percent) > 0 and sum(surge_percent)/len(surge_percent) > 100:
-    print("\tSURGE ({:n}%)\t\t\t\t{:8.4f} USD\t\t {:8.4f} USD\t{:8.4f} USD".format((sum(usd_sum_surge)*100)/sum(usd_sum),sum(usd_sum_surge),sum(held_sum_surge),sum(paid_sum_surge)))
+    print("\tSURGE ({:.0f}%)\t\t\t\t{:8.4f} USD\t\t {:8.4f} USD\t{:8.4f} USD".format((sum(usd_sum_surge)*100)/sum(usd_sum),sum(usd_sum_surge),sum(held_sum_surge),sum(paid_sum_surge)))
 
 if sum(disposed) > 0:
     print("\tHELD AMOUNT RETURNED\t   {:8.2f} USD\t\t\t\t\t\t{:8.4f} USD".format(-1*sum(disposed),sum(disposed)))
