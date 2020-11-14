@@ -1,5 +1,8 @@
 #!/bin/bash -e
 
+# -u option: exits if error on unset variables
+# -e option: exits if any commands exits non-zero
+
 # This script will evaluate the amount to be paid for being a Storage Node on Storj Network and send a pushbullet notification about it.
 # The script is based on storj_earnings script by ReneSmeekes.
 # This script has been developed by Jeremy Fritzen. Thank you for sharing and keeping author name in it.
@@ -22,12 +25,14 @@ DATE=$(date +%Y-%m-%d-%H-%M)
 for conf_file in `ls $SCRIPT_DIR/*.conf`
 do
 	. $conf_file
-	
+
 	TEMP_DIR=$SCRIPT_DIR/$CONTAINER_NAME/infodbcopy
-	
+
 	[[ -d $SCRIPT_DIR/$CONTAINER_NAME/infodbcopy ]] || mkdir -p $SCRIPT_DIR/$CONTAINER_NAME/infodbcopy
 	[[ -d $SCRIPT_DIR/$CONTAINER_NAME/history ]] || mkdir -p $SCRIPT_DIR/$CONTAINER_NAME/history
 
+
+	[[ `docker ps --format '{{.Names}}'` == *$CONTAINER_NAME* ]] || continue
 	docker stop -t 300 $CONTAINER_NAME
 
 	cp $STORAGE_DIR/bandwidth.db $TEMP_DIR/
@@ -51,6 +56,7 @@ do
 		--header 'Content-Type: application/json' \
 		--data-binary '{"type": "note", "title": "'"$STORAGENODE_NAME"'", "body": "'"Gains potentiels à date pour le mois en cours : $earnings"'", "device_iden": "'"$PUSHBULLET_DEVICE"'"}'
 	fi
+
 done
 
 
