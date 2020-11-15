@@ -43,7 +43,7 @@ do
 
 	docker start $CONTAINER_NAME
 
-	python $SCRIPT_DIR/storj_earnings/earnings.py $TEMP_DIR $1 | tee $SCRIPT_DIR/$CONTAINER_NAME/history/payment-$DATE
+	python $SCRIPT_DIR/storj_earnings/earnings.py $TEMP_DIR $1 | tee $SCRIPT_DIR/$CONTAINER_NAME/history/payment-$DATE $SCRIPT_DIR/$CONTAINER_NAME/history/last
 
 	earnings=$(awk '/^TOTAL/ {print $8,$9}' $SCRIPT_DIR/$CONTAINER_NAME/history/payment-$DATE)
 
